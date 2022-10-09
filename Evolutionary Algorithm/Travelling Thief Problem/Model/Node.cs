@@ -8,18 +8,18 @@ namespace Evolutionary_Algorithm.Travelling_Thief_Problem.Model
 {
     public class Node
     {
-        private Node[,] _nodeGrid;
+        private double[,] _nodeGrid;
         private int _gridSize;
 
         private List<NodeItem> _items;
         public Dictionary<int,int> ItemStatus { get; private set; }
 
         public int Index { get; private set; }
-        public int PosX { get; private set; }
-        public int PosY { get; private set; }
+        public double PosX { get; private set; }
+        public double PosY { get; private set; }
         public bool Visited { get; set; } = false;
         public bool StartingNode { get; set; } = false;
-        public Node(Node[,] nodeGrid, int index, int posX, int posY)
+        public Node(double[,] nodeGrid, int index, double posX, double posY)
         {
             _nodeGrid = nodeGrid;
             _gridSize = nodeGrid.Length;
@@ -40,6 +40,10 @@ namespace Evolutionary_Algorithm.Travelling_Thief_Problem.Model
             }
 
             return profit;
+        }
+        public override string ToString()
+        {
+            return $"Id:{Index}, X:{PosX}, Y:{PosY}";
         }
     }
 }
