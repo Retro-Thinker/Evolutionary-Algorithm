@@ -10,6 +10,6 @@ namespace Evolutionary_Algorithm.DataLoader
 {
     public interface IDataProcessing
     {
-        double[,] LoadAndSeedData();
+        void LoadAndSeedData();
     }
 }

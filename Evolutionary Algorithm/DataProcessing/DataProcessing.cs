@@ -15,11 +15,12 @@ namespace Evolutionary_Algorithm.DataProcessing
 {
     public class DataProcessing : IDataProcessing
     {
-        private ILogger _logger;
         private string _filePath;
         private string[] _dataLines;
-        private double[,] _nodeDataGrid;
-        private List<Node> _nodes;
+        
+        public ILogger _logger;
+        public double[,] _nodeDataGrid;
+        public List<Node> _nodes;
         
         private int _configLines;
         private int _nodeConfigStartIndex;
@@ -116,11 +117,10 @@ namespace Evolutionary_Algorithm.DataProcessing
                 nodeList
                     .Find(n => n.Index == nodeItem.AssignedNodeId)
                     ._items.Add(nodeItem);
-                Console.WriteLine($"Id:{nodeItem.Index}");
             }
         }
 
-        public double[,] LoadAndSeedData()
+        public void LoadAndSeedData()
         {
             if (_dataLines == null)
             {
@@ -130,7 +130,8 @@ namespace Evolutionary_Algorithm.DataProcessing
             SeedNodeData();
             SeedItemsData();
 
-            return _nodeDataGrid;
+            Configuration.Nodes = _nodes;
+            Configuration.NodeDistance = _nodeDistanceStats;
         }
     }
 }

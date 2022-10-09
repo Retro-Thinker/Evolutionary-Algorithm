@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Evolutionary_Algorithm.Travelling_Thief_Problem.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,5 +18,7 @@ namespace Evolutionary_Algorithm.Travelling_Thief_Problem
         public double MaximumSpeed { get; set; }
         public double RentingRatio { get; set; }
         public string EdgeWeightType { get; set; }
+        public List<Node> Nodes { get; set; }
+        public Dictionary<(Node, Node), double> NodeDistance { get; set; }
     }
 }
