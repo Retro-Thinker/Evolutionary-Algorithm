@@ -17,20 +17,27 @@ namespace Evolutionary_Algorithm.DataProcessing
     {
         private ILogger _logger;
         private string _filePath;
-        private int _configLines;
         private string[] _dataLines;
-        private double[,] nodeDataGrid;
+        private double[,] _nodeDataGrid;
+        
+        private int _configLines;
+        private int _nodeConfigStartIndex;
+        private int _ItemsConfigStartIndex;
+        
         public Configuration Configuration { get; private set; }
         public Dictionary<(Node, Node), double> nodeDistanceStats;
 
-        public DataProcessing(string filePath, ILogger logger, int configLines)
+        public DataProcessing(string filePath, ILogger logger)
         {
             _logger = logger;
             _filePath = filePath;
-            _configLines = configLines;
             _dataLines = File.ReadAllLines(_filePath);
             Configuration = new Configuration();
             nodeDistanceStats = new Dictionary<(Node, Node), double>();
+
+            _nodeConfigStartIndex = Array.FindIndex(_dataLines, str => str.StartsWith("NODE_COORD_SECTION")) + 1;
+            _ItemsConfigStartIndex = Array.FindIndex(_dataLines, str => str.StartsWith("ITEMS SECTION")) + 1;
+            _configLines = _nodeConfigStartIndex - 1;
 
             LoadConfiguration();
         }
@@ -57,30 +64,30 @@ namespace Evolutionary_Algorithm.DataProcessing
 
         private void SeedNodeData()
         {
-            double[,] nodes = new double[Configuration.Dimensions, Configuration.Dimensions];
+            _nodeDataGrid = new double[Configuration.Dimensions, Configuration.Dimensions];
 
-            for (int i = 0; i < nodes.GetLength(0); i++)
+            for (int i = 0; i < _nodeDataGrid.GetLength(0); i++)
             {
 
-                int nodeTableIndex = _configLines + i + 1;
+                int nodeTableIndex = _nodeConfigStartIndex + i;
                 var readedNodeData = _dataLines[nodeTableIndex].Split("\t");
 
-                var procededNode = CreateNode(nodes, readedNodeData);
+                var procededNode = CreateNode(_nodeDataGrid, readedNodeData);
 
 
-                for (int j = 0; j < nodes.GetLength(0); j++)
+                for (int j = 0; j < _nodeDataGrid.GetLength(0); j++)
                 {
-                    nodeTableIndex = _configLines + j + 1;
-                    if (i == j) nodes[i, j] = 0d;
+                    nodeTableIndex = _nodeConfigStartIndex + j;
+                    if (i == j) _nodeDataGrid[i, j] = 0d;
                     else
                     {
                         readedNodeData = _dataLines[nodeTableIndex].Split("\t");
-                        var nextNode = CreateNode(nodes, readedNodeData);
+                        var nextNode = CreateNode(_nodeDataGrid, readedNodeData);
 
                         double distance = Math.Sqrt(Math.Pow(procededNode.PosX - nextNode.PosX, 2) + Math.Pow(procededNode.PosY - nextNode.PosY, 2));
 
                         nodeDistanceStats.Add((procededNode, nextNode), distance);
-                        nodes[i, j] = distance;
+                        _nodeDataGrid[i, j] = distance;
                     }
                 }
             }
@@ -93,11 +100,10 @@ namespace Evolutionary_Algorithm.DataProcessing
                 _dataLines = File.ReadAllLines(_filePath);                
                 LoadConfiguration();
             }
-
             SeedNodeData();
 
 
-            return nodes;
+            return _nodeDataGrid;
         }
     }
 }
