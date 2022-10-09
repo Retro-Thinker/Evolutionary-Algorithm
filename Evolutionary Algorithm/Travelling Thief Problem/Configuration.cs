@@ -8,14 +8,14 @@ namespace Evolutionary_Algorithm.Travelling_Thief_Problem
 {
     public class Configuration
     {
-        public string ProblemName { get; }
-        public string DataType { get; }
-        public int NumberOfDimmensions { get; }
-        public int CapacityOfKnapsack { get; }
-        public int KnapsackCapcaity { get; }
-        public double MinimumSpeed { get; }
-        public double MaximumSpeed { get; }
-        public double RentingRatio { get; }
-        public string EdgeWeightType { get; }
+        public string ProblemName { get; set; }
+        public string DataType { get; set; }
+        public int Dimensions { get; set; }
+        public int NumberOfItems { get; set; }
+        public int CapacityOfKnapsack { get; set; }
+        public double MinimumSpeed { get; set; }
+        public double MaximumSpeed { get; set; }
+        public double RentingRatio { get; set; }
+        public string EdgeWeightType { get; set; }
     }
 }

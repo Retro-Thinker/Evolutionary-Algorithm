@@ -1,2 +1,5 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using Evolutionary_Algorithm.DataProcessing;
+using Evolutionary_Algorithm.DataProcessing.Logs;
+
+DataProcessing dp = new DataProcessing("data/easy_1.ttp", new Logger(), 9);
+dp.LoadAndSeedData();
