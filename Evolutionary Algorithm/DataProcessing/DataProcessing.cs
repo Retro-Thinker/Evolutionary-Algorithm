@@ -19,13 +19,14 @@ namespace Evolutionary_Algorithm.DataProcessing
         private string _filePath;
         private string[] _dataLines;
         private double[,] _nodeDataGrid;
+        private List<Node> _nodes;
         
         private int _configLines;
         private int _nodeConfigStartIndex;
-        private int _ItemsConfigStartIndex;
+        private int _itemsConfigStartIndex;
         
         public Configuration Configuration { get; private set; }
-        public Dictionary<(Node, Node), double> nodeDistanceStats;
+        public Dictionary<(Node, Node), double> _nodeDistanceStats;
 
         public DataProcessing(string filePath, ILogger logger)
         {
@@ -33,10 +34,10 @@ namespace Evolutionary_Algorithm.DataProcessing
             _filePath = filePath;
             _dataLines = File.ReadAllLines(_filePath);
             Configuration = new Configuration();
-            nodeDistanceStats = new Dictionary<(Node, Node), double>();
+            _nodeDistanceStats = new Dictionary<(Node, Node), double>();
 
             _nodeConfigStartIndex = Array.FindIndex(_dataLines, str => str.StartsWith("NODE_COORD_SECTION")) + 1;
-            _ItemsConfigStartIndex = Array.FindIndex(_dataLines, str => str.StartsWith("ITEMS SECTION")) + 1;
+            _itemsConfigStartIndex = Array.FindIndex(_dataLines, str => str.StartsWith("ITEMS SECTION")) + 1;
             _configLines = _nodeConfigStartIndex - 1;
 
             LoadConfiguration();
@@ -86,10 +87,36 @@ namespace Evolutionary_Algorithm.DataProcessing
 
                         double distance = Math.Sqrt(Math.Pow(procededNode.PosX - nextNode.PosX, 2) + Math.Pow(procededNode.PosY - nextNode.PosY, 2));
 
-                        nodeDistanceStats.Add((procededNode, nextNode), distance);
+                        _nodeDistanceStats.Add((procededNode, nextNode), distance);
                         _nodeDataGrid[i, j] = distance;
                     }
                 }
+            }
+        }
+
+        private void SeedItemsData()
+        {
+            var nodeList = _nodeDistanceStats.Keys
+                .Select(k => k.Item1)
+                .DistinctBy(k => k.Index)
+                .ToList();
+
+            _nodes = nodeList;
+
+            for (int i = _itemsConfigStartIndex; i < _itemsConfigStartIndex + Configuration.NumberOfItems; i++)
+            {
+                var readedItemData = _dataLines[i].Split("\t");
+                var nodeItem = new NodeItem();
+
+                nodeItem.Index = int.Parse(readedItemData[0]);
+                nodeItem.Profit = int.Parse(readedItemData[1]);
+                nodeItem.Weight = int.Parse(readedItemData[2]);
+                nodeItem.AssignedNodeId = int.Parse(readedItemData[3]);
+
+                nodeList
+                    .Find(n => n.Index == nodeItem.AssignedNodeId)
+                    ._items.Add(nodeItem);
+                Console.WriteLine($"Id:{nodeItem.Index}");
             }
         }
 
@@ -101,7 +128,7 @@ namespace Evolutionary_Algorithm.DataProcessing
                 LoadConfiguration();
             }
             SeedNodeData();
-
+            SeedItemsData();
 
             return _nodeDataGrid;
         }

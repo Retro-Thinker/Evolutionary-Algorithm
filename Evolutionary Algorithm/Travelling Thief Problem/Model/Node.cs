@@ -11,7 +11,7 @@ namespace Evolutionary_Algorithm.Travelling_Thief_Problem.Model
         private double[,] _nodeGrid;
         private int _gridSize;
 
-        private List<NodeItem> _items;
+        public List<NodeItem> _items;
         public Dictionary<int,int> ItemStatus { get; private set; }
 
         public int Index { get; private set; }
