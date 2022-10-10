@@ -9,13 +9,23 @@ using Evolutionary_Algorithm.Travelling_Thief_Problem.Persistance.Selection;
 DataProcessing dp = new DataProcessing("data/trivial_0.ttp", new Logger());
 dp.LoadAndSeedData();
 
-WorkflowManager workflowManager =
+/*WorkflowManager workflowManager =
     new WorkflowManager(50,
                         dp.Configuration,
                         new InverseMutation(),
                         new OrderedCrossover(),
                         new TournamentSelection(),
                         new RandomInitialization(0.6),
+                        dp._logger);*/
+
+
+WorkflowManager workflowManager =
+    new WorkflowManager(50,
+                        dp.Configuration,
+                        new InverseMutation(),
+                        new OrderedCrossover(),
+                        new TournamentSelection(),
+                        new GreedyInitialization(),
                         dp._logger);
 
 workflowManager.InitializeSpecimens();

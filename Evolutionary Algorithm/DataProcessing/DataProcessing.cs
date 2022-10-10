@@ -67,25 +67,26 @@ namespace Evolutionary_Algorithm.DataProcessing
         private void SeedNodeData()
         {
             _nodeDataGrid = new double[Configuration.Dimensions, Configuration.Dimensions];
+            _nodes = new List<Node>();
 
             for (int i = 0; i < _nodeDataGrid.GetLength(0); i++)
             {
-
                 int nodeTableIndex = _nodeConfigStartIndex + i;
                 var readedNodeData = _dataLines[nodeTableIndex].Split("\t");
+                _nodes.Add(CreateNode(_nodeDataGrid, readedNodeData));
+            }
 
-                var procededNode = CreateNode(_nodeDataGrid, readedNodeData);
 
+            for (int i = 0; i < _nodeDataGrid.GetLength(0); i++)
+            {
+                var procededNode = _nodes[i];
 
                 for (int j = 0; j < _nodeDataGrid.GetLength(0); j++)
                 {
-                    nodeTableIndex = _nodeConfigStartIndex + j;
                     if (i == j) _nodeDataGrid[i, j] = 0d;
                     else
                     {
-                        readedNodeData = _dataLines[nodeTableIndex].Split("\t");
-                        var nextNode = CreateNode(_nodeDataGrid, readedNodeData);
-
+                        var nextNode = _nodes[j];
                         double distance = Math.Sqrt(Math.Pow(procededNode.PosX - nextNode.PosX, 2) + Math.Pow(procededNode.PosY - nextNode.PosY, 2));
 
                         _nodeDistanceStats.Add((procededNode, nextNode), distance);
@@ -97,13 +98,7 @@ namespace Evolutionary_Algorithm.DataProcessing
 
         private void SeedItemsData()
         {
-            var nodeList = _nodeDistanceStats.Keys
-                .Select(k => k.Item1)
-                .DistinctBy(k => k.Index)
-                .ToList();
-
-            _nodes = nodeList;
-
+            
             for (int i = _itemsConfigStartIndex; i < _itemsConfigStartIndex + Configuration.NumberOfItems; i++)
             {
                 var readedItemData = _dataLines[i].Split("\t");
@@ -114,7 +109,7 @@ namespace Evolutionary_Algorithm.DataProcessing
                 nodeItem.Weight = int.Parse(readedItemData[2]);
                 nodeItem.AssignedNodeId = int.Parse(readedItemData[3]);
 
-                nodeList
+                _nodes
                     .Find(n => n.Index == nodeItem.AssignedNodeId)
                     ._items.Add(nodeItem);
             }

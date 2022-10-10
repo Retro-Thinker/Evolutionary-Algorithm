@@ -50,7 +50,7 @@ namespace Evolutionary_Algorithm.Travelling_Thief_Problem.Model
 
         public void Eval()
         {
-            Score = KPScoreEvaluation() - TSPScoreEvaluation();
+            Score = (double)KPScoreEvaluation() - (double)TSPScoreEvaluation();
         }
 
         private double TSPScoreEvaluation()
